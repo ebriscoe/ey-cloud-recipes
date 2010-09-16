@@ -14,7 +14,9 @@
 # require_recipe "mbari-ruby"
 
 # uncomment to turn on thinking sphinx/ultra sphinx. Remember to edit cookbooks/sphinx/recipes/default.rb first!
-# require_recipe "sphinx"
+if node[:name] == "Utility1"
+  require_recipe "sphinx"
+end
 
 #uncomment to turn on memcached
 # require_recipe "memcached"
