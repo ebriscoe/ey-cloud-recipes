@@ -14,12 +14,16 @@
 # require_recipe "mbari-ruby"
 
 # uncomment to turn on thinking sphinx/ultra sphinx. Remember to edit cookbooks/sphinx/recipes/default.rb first!
-if node[:name] == "Utility1"
-  require_recipe "sphinx"
-end
+#if node[:name] == "Utility1"
+#  require_recipe "sphinx"
+#end
 
+if node[:name] == "Utility1"
+  require_recipe "delayed_job"
+end
+  
 #uncomment to turn on memcached
-# require_recipe "memcached"
+#require_recipe "memcached"
 
 #uncomment to run the authorized_keys recipe
 #require_recipe "authorized_keys"
