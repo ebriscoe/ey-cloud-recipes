@@ -103,7 +103,7 @@ if ['solo', 'app', 'app_master', 'util'].include?(node[:instance_role])
 
     execute "monit quit"
 
-    if cron_interval && node[:instance_role] == "util"
+    if cron_interval && node[:instance_role] == "util" && false
       cron "sphinx index" do
         action  :create
         minute  "*/#{cron_interval}"
