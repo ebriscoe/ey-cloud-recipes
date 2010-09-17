@@ -17,7 +17,7 @@ flavor = "thinking_sphinx"
 # If you don't want scheduled reindexes, just leave this commented.
 #
 # Uncommenting this line as-is will reindex once every 10 minutes.
-cron_interval = 30
+cron_interval = 10
 
 if ['solo', 'app', 'app_master', 'util'].include?(node[:instance_role])
 
@@ -89,19 +89,21 @@ if ['solo', 'app', 'app_master', 'util'].include?(node[:instance_role])
       message "indexing #{flavor}"
     end
 
-    execute "#{flavor} index" do
-      command "rake #{flavor}:index"
-      user node[:owner_name]
-      environment({
-        'HOME' => "/home/#{node[:owner_name]}",
-        'RAILS_ENV' => node[:environment][:framework_env]
-      })
-      cwd "/data/#{app_name}/current"
+    if node[:instance_role] == "util"
+      execute "#{flavor} index" do
+        command "rake #{flavor}:index"
+        user node[:owner_name]
+        environment({
+          'HOME' => "/home/#{node[:owner_name]}",
+          'RAILS_ENV' => node[:environment][:framework_env]
+        })
+        cwd "/data/#{app_name}/current"
+      end
     end
 
     execute "monit quit"
 
-    if cron_interval
+    if cron_interval && node[:instance_role] == "util"
       cron "sphinx index" do
         action  :create
         minute  "*/#{cron_interval}"
