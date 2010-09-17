@@ -1,6 +1,6 @@
 <%
    sphinx = nil
-   node[:engineyard][:environment][:instances].each do |i|
+   @node[:engineyard][:environment][:instances].each do |i|
       sphinx = i if i[:name] == "Utility1"
    end
 %>
