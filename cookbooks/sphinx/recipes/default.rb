@@ -19,7 +19,7 @@ flavor = "thinking_sphinx"
 # Uncommenting this line as-is will reindex once every 10 minutes.
 cron_interval = 30
 
-if ['solo', 'app', 'app_master'].include?(node[:instance_role])
+if ['solo', 'app', 'app_master', 'util'].include?(node[:instance_role])
 
   # be sure to replace "app_name" with the name of your application.
   run_for_app(appname) do |app_name, data|
