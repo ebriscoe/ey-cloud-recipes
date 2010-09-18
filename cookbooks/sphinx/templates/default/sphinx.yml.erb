@@ -4,14 +4,15 @@
       sphinx = i if i[:name] == "Utility1"
    end
    
-   # monit -g dj_md2 restart all
+   # 
+   # domU-12-31-39-09-05-92.compute-1.internal
 %>
 
 <%= @node[:environment][:framework_env] %>:
   searchd_log_file: /var/log/engineyard/sphinx/<%= @app_name %>/searchd.log
   query_log_file: /var/log/engineyard/sphinx/<%= @app_name %>/query.log
   pid_file: /var/run/sphinx/<%= @app_name %>.pid
-  address: ec2-174-129-178-162.compute-1.amazonaws.com
+  address: <%= sphinx[:private_hostname] %>
   port: 9312
   mem_limit: <%= @mem_limit %>
   config_file: /data/<%= @app_name %>/current/config/<%= @flavor %>/<%= @node[:environment][:framework_env] %>.sphinx.conf
