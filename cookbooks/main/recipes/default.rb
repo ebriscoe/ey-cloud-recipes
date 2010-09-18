@@ -16,9 +16,9 @@
 # uncomment to turn on thinking sphinx/ultra sphinx. Remember to edit cookbooks/sphinx/recipes/default.rb first!
 require_recipe "sphinx"
 
-if node[:name] == "Utility1"
+#if node[:name] == "Utility1"
   require_recipe "delayed_job"
-end
+#end
   
 #uncomment to turn on memcached
 require_recipe "memcached"

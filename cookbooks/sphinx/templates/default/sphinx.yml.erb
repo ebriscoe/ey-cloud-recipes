@@ -2,18 +2,15 @@
    sphinx = nil
    @node[:engineyard][:environment][:instances].each do |i|
       sphinx = i if i[:name] == "Utility1"
-   end
-   
-   # 
-   # domU-12-31-39-09-05-92.compute-1.internal
-   # ec2-174-129-178-162.compute-1.amazonaws.com
+   end   
+   # sphinx[:private_hostname]
 %>
 
 <%= @node[:environment][:framework_env] %>:
   searchd_log_file: /var/log/engineyard/sphinx/<%= @app_name %>/searchd.log
   query_log_file: /var/log/engineyard/sphinx/<%= @app_name %>/query.log
   pid_file: /var/run/sphinx/<%= @app_name %>.pid
-  address: <%= sphinx[:private_hostname] %>
+  address: localhost
   port: 9312
   mem_limit: <%= @mem_limit %>
   config_file: /data/<%= @app_name %>/current/config/<%= @flavor %>/<%= @node[:environment][:framework_env] %>.sphinx.conf
