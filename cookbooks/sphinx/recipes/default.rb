@@ -89,14 +89,16 @@ if ['solo', 'app', 'app_master', 'util'].include?(node[:instance_role])
       message "indexing #{flavor}"
     end
 
-    execute "#{flavor} index" do
-      command "rake #{flavor}:index"
-      user node[:owner_name]
-      environment({
-        'HOME' => "/home/#{node[:owner_name]}",
-        'RAILS_ENV' => node[:environment][:framework_env]
-      })
-      cwd "/data/#{app_name}/current"
+    if node[:instance_role] == "util"
+      execute "#{flavor} index" do
+        command "rake #{flavor}:index"
+        user node[:owner_name]
+        environment({
+          'HOME' => "/home/#{node[:owner_name]}",
+          'RAILS_ENV' => node[:environment][:framework_env]
+        })
+        cwd "/data/#{app_name}/current"
+      end
     end
 
     execute "monit quit"
