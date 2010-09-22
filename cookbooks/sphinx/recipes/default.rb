@@ -17,7 +17,7 @@ flavor = "thinking_sphinx"
 # If you don't want scheduled reindexes, just leave this commented.
 #
 # Uncommenting this line as-is will reindex once every 10 minutes.
-cron_interval = 30
+# cron_interval = 30
 
 if ['solo', 'app', 'app_master', 'util'].include?(node[:instance_role])
 
@@ -103,11 +103,11 @@ if ['solo', 'app', 'app_master', 'util'].include?(node[:instance_role])
 
     execute "monit quit"
 
-    if cron_interval && node[:instance_role] == "util"
+    if node[:instance_role] == "util"
       cron "sphinx index" do
         action  :create
-        minute  "*/#{cron_interval}"
-        hour    '*'
+        minute  "0"
+        hour    '1'
         day     '*'
         month   '*'
         weekday '*'
