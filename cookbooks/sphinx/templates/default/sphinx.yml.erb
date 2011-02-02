@@ -1,17 +1,10 @@
-<%
-   sphinx = nil
-   @node[:engineyard][:environment][:instances].each do |i|
-      sphinx = i if i[:name] == "Utility1"
-   end   
-%>
-
 <%= @node[:environment][:framework_env] %>:
   searchd_log_file: /var/log/engineyard/sphinx/<%= @app_name %>/searchd.log
   query_log_file: /var/log/engineyard/sphinx/<%= @app_name %>/query.log
   pid_file: /var/run/sphinx/<%= @app_name %>.pid
-  address: <%= sphinx[:private_hostname] %>
-  port: 9312
+  address: <%= @sphinx_ip.nil? ? "127.0.0.1" : @sphinx_ip  %>
+  port: 3312
   mem_limit: <%= @mem_limit %>
   config_file: /data/<%= @app_name %>/current/config/<%= @flavor %>/<%= @node[:environment][:framework_env] %>.sphinx.conf
   searchd_file_path: /var/log/engineyard/sphinx/<%= @app_name %>/indexes
-  min_prefix_len: 3
+
