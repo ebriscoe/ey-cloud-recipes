@@ -20,7 +20,8 @@ flavor = "thinking_sphinx"
 # cron_interval = 10
 cron_interval = false
 
-if ['solo', 'app_master'].include?(node[:instance_role])
+if ['solo', 'utility'].include?(node[:instance_role])
+#if ['solo', 'app_master'].include?(node[:instance_role])
   
   gem_package "curb" do
     version "0.3.4"
