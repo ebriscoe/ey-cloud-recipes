@@ -1,62 +1,68 @@
-Sphinx Chef Cookbook for CLI Users -- Sphinx 0.9.9
-=========
-Sphinx is a full-text search engine, distributed under GPL version 2. Commercial licensing (eg. for embedded use) is also available upon request.
+ey-cloud-recipes/sphinx
+========================
 
-Generally, it's a standalone search engine, meant to provide fast, size-efficient and relevant full-text search functions to other applications. Sphinx was specially designed to integrate well with SQL databases and scripting languages.
+This recipe is for configuring and deploying sphinx on AppCloud. This is for Rails 3. For Thinking Sphinx 3 support, please use the [Thinking Sphinx 3 cookbook](https://github.com/engineyard/ey-cloud-recipes/tree/master/cookbooks/thinking-sphinx-3)
 
-Currently built-in data source drivers support fetching data either via direct connection to MySQL, or PostgreSQL, or from a pipe in a custom XML format. Adding new drivers (eg. to natively support some other DBMSes) is designed to be as easy as possible.
+Dependencies
+============
 
-Search API is natively ported to PHP, Python, Perl, Ruby, Java, and also available as a pluggable MySQL storage engine. API is very lightweight so porting it to new language is known to take a few hours.
+If you're using the ultrasphinx flavor in this recipe, you'll need to make sure
+you install the chronic gem in your environment (this is not handled by the recipe).
 
-As for the name, Sphinx is an acronym which is officially decoded as SQL Phrase Index. Yes, I know about CMU's Sphinx project. 
+As previously mentioned, your application needs to have the appropriate gem/plugin installed
+already.
 
-Description
---------
+For thinking_sphinx add the following to your gemfile:
 
-This recipe installs [sphinx][1] 0.9.9 and attempts to deliver a straight forward method of using a combination of Chef recipes and Deploy Hooks.  
+    gem 'thinking-sphinx', '2.0.3'
 
-Design
---------
+For ultrasphinx:
 
-This recipe configures [sphinx][1] and searchd on the 'solo|app_master' instance.  It creates a sphinx.yml that is usable on the app instances to communicate with the searchd instance running on the app_master.  This is not meant to be a contradiction with other recipes that suggest to run on a utility instance if you need to change this behavior you can modify [default.rb][2] to change this logic.  Other portions of the recipe may need to be updated as well.
+    script/plugin install git://github.com/fauna/ultrasphinx.git
 
-Warnings
---------
+Also note that searchd won't actually start unless you've already specified indexes
+in your application.
 
-You **MUST** update the [deloy hook][3] application name in order for sphinx to be monitored properly.  Failure to do so may cause searchd to be unmonitored and cause unacceptable behavior.  Additionally the [deploy hook][3] assumes that thinking_sphinx is configured in Bundler.  If you do not follow this behavior you will need to remove the 'bundle exec' in the [deploy hook][3].
+Using it
+========
 
-Usage
---------
+Edit the recipe, changing the appropriate fields as annotated in recipes/default.rb.
+Namely:
 
-To enable this recipe you first must uncomment the [require_recipe][9] statement in main/recipes/default.rb.  Once you have done that you then need to update the [appname][8] in sphinx/recipes/default.rb.  Then commit those changes and use the [engineyard][10] and upload the recipes to the environment in question,
+	1. Add your application name.
+  	2. Uncomment the flavor you want to use (thinking_sphinx or ultrasphinx).
+  	3. Set the cron_interval to specify how frequently you want to reindex. If do not give an index, your data will NOT be indexed.
 
-``ey recipes upload -e <environment>``.  
+	4. Add the following to before_migrate.rb [deploy hooks](http://docs.engineyard.com/appcloud/howtos/deployment/use-deploy-hooks-with-engine-yard-appcloud):
 
-Then either apply the recipes,
+    run "ln -nfs #{shared_path}/config/sphinx #{release_path}/config/sphinx"
+    run "ln -nfs #{shared_path}/config/sphinx.yml #{release_path}/config/sphinx.yml"
 
-``ey recipes apply -e <environment>``. 
+By default, the recipe will install and run sphinx on all app instances. If you want to
+use a dedicated utility instance, just set the "utility_name" variable to the name of
+your utility instance. By default this is set to nil.
 
-or boot the environment in question.  Then install the [deploy hook][3] in question in your application root in a folder called 'deploy' called before_migrate.rb with the modified [appname][3] and commit that to your application repo and then deploy.  On an **initial** environment it may **fail** to start searchd initially until deploying. 
+Caveats
+========
+If you have multiple app slaves or are installing to a dedicated utility instance, the it's
+likely that the recipe run will fail on those instances the very first run because the database
+migrations will not have run yet on your application master. If this occurs, simply deploy again
+and the recipe should succeed the second time around. This should only occur going forward
+if you set new indexes on fields that are in migrations that have to be run.
 
+Warranty
+========
+This recipe is provided as is, if you have any problems with it please open an issue or send a pull request with your fix.
 
-Notes
---------
+Additional Resources
+========
 
-If you wish to change the behavior of how searchd is restarted to a more graceful restart you are more then welcome to modify the [deploy hook][3] to your tastes.  Suggestions are open on this for an default of course.   
+You can get additional information on sphinx configuration and setup here:
 
+  * [thinking_sphinx](http://freelancing-god.github.com/ts/en/)
+  * [ultrasphinx](http://blog.evanweaver.com/files/doc/fauna/ultrasphinx/files/README.html)
 
-Bugs / Comments
---------
-
-If you have any problems with this [recipe][5] please either comment and supply a pull with the patched code.  Otherwise if you have [support][6] please open a ticket at our [support][6] page if you lack support please use our [community][7] forums.
-
-[1]: http://sphinxsearch.com/
-[2]: http://github.com/damm/ey-cloud-recipes/blob/sphinx_test/cookbooks/sphinx/recipes/default.rb#L151
-[3]: http://github.com/damm/ey-cloud-recipes/blob/sphinx_test/cookbooks/sphinx/before_migrate.rb
-[4]: http://docs.engineyard.com/appcloud/howtos/customizations/custom-chef-recipes
-[5]: http://github.com/damm/ey-cloud-recipes/tree/sphinx_test/cookbooks/sphinx
-[6]: http://support.cloud.engineyard.com/
-[7]: http://community.engineyard.com/
-[8]: http://github.com/damm/ey-cloud-recipes/blob/sphinx_test/cookbooks/sphinx/recipes/default.rb#L7
-[9]: http://github.com/damm/ey-cloud-recipes/blob/sphinx_test/cookbooks/main/recipes/default.rb#L17
-[10]: http://docs.engineyard.com/appcloud/guides/deployment/home#engine-yard-cli-user-guide
+Other examples:
+[1]: https://github.com/bratta/ey-cloud-recipes/tree/master/cookbooks/sphinx
+[2]: https://github.com/damm/ey-cloud-recipes/tree/sphinx_test/cookbooks/sphinx
+[3]: https://github.com/damm/ey-tsphinx2
