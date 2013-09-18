@@ -14,7 +14,7 @@
 # include_recipe "collectd"
 
 #if node[:name] == "Utility1"
-  require_recipe "delayed_job"
+  include_recipe "delayed_job"
 #end
 
 # uncomment to use the block recipe. See cookbooks/block/readme.md for documentation.
@@ -28,7 +28,7 @@
 #require_recipe "sphinx"
   
 #uncomment to turn on memcached
-require_recipe "memcached"
+include_recipe "memcached"
 
 # include_recipe "memcached"
 
@@ -114,7 +114,7 @@ require_recipe "memcached"
 # include_recipe "jenkins"
 
 #enable Extension modules for a given Postgresql database
-# if ['solo','db_master', 'db_slave'].include?(node[:instance_role])
+if ['solo','db_master', 'db_slave'].include?(node[:instance_role])
   # Extensions that support both Postgres 9.0, 9.1 and 9.2
   # postgresql9_autoexplain "dbname"
   # postgresql9_btree_gin "dbname"
@@ -159,4 +159,4 @@ require_recipe "memcached"
   #Admin-Level Contribs
   # postgresql9_pg_buffercache "postgres"
   # postgresql9_pg_freespacemap "postgres"
-#end
+end
