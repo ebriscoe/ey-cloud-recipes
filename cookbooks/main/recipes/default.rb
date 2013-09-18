@@ -140,7 +140,7 @@ require_recipe "memcached"
   # postgresql9_postgis "dbname"
 
   # PostGis 2.0 (use with version 9.2)
-  # postgresql9_postgis2 "dbname"
+  postgresql9_postgis2 "md2"
   # postgresql9_seg "dbname"
   # postgresql9_sslinfo "dbname"
   # postgresql9_tablefunc "dbname"
