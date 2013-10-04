@@ -17,6 +17,8 @@
   include_recipe "delayed_job"
 #end
 
+include_recipe "timezone"
+
 # uncomment to use the block recipe. See cookbooks/block/readme.md for documentation.
 # include_recipe "ban"
 
