@@ -1,4 +1,3 @@
-#
 # Cookbook Name:: sphinx
 # Recipe:: default
 #
@@ -20,8 +19,7 @@ flavor = "thinking_sphinx"
 # cron_interval = 10
 cron_interval = false
 
-if ['solo', 'utility'].include?(node[:instance_role])
-#if ['solo', 'app_master'].include?(node[:instance_role])
+if ['solo', 'util'].include?(node[:instance_role])
   
   gem_package "curb" do
     version "0.3.4"
@@ -52,6 +50,7 @@ run_for_app(appname) do |app_name, data|
         owner node[:owner_name]
         group node[:owner_name]
         mode 0755
+        recursive true
       end
 
      remote_file "/etc/logrotate.d/sphinx" do
@@ -83,7 +82,7 @@ run_for_app(appname) do |app_name, data|
         mode 0644
         source "sphinx.yml.erb"
         variables({
-          :sphinx_ip => @node['master_app_server']['private_dns_name'].nil? ? "127.0.0.1" : @node['master_app_server']['private_dns_name'],
+          :sphinx_ip => node['utility_instances'][0].nil? ? "127.0.0.1" : node['utility_instances'][0]['hostname'],
           :app_name => app_name,
           :flavor => flavor.eql?("thinking_sphinx") ? "thinkingsphinx" : flavor,
           :mem_limit => 32,
@@ -138,9 +137,9 @@ run_for_app(appname) do |app_name, data|
   end
 end
 
-## this is for the other app / util instances.
+## this is for the app_master and app instances.
 
-if ['app', 'util'].include?(node[:instance_role])
+if ['app_master', 'app'].include?(node[:instance_role])
 
   run_for_app(appname) do |app_name, data|
     template "/data/#{app_name}/shared/config/sphinx.yml" do
@@ -150,7 +149,7 @@ if ['app', 'util'].include?(node[:instance_role])
       backup 0
       source "sphinx.yml.erb"
       variables({
-      :sphinx_ip => @node['master_app_server']['private_dns_name'].nil? ? "127.0.0.1" : @node['master_app_server']['private_dns_name'],
+      :sphinx_ip => node['utility_instances'][0].nil? ? "127.0.0.1" : node['utility_instances'][0]['hostname'],
       :app_name => app_name,
       :flavor => flavor.eql?("thinking_sphinx") ? "thinkingsphinx" : flavor,
       :mem_limit => 32,
